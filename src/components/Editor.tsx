@@ -9,7 +9,6 @@ import TextareaAutosize from 'react-textarea-autosize'
 import { z } from 'zod'
 
 import { toast } from '@/src/hooks/use-toast'
-import { uploadFiles } from '@/src/lib/uploadthing'
 import { PostCreationRequest, PostValidator } from '@/src/lib/validators/post'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
@@ -80,7 +79,8 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
     const Code = (await import('@editorjs/code')).default
     const LinkTool = (await import('@editorjs/link')).default
     const InlineCode = (await import('@editorjs/inline-code')).default
-    const ImageTool = (await import('@editorjs/image')).default
+    
+    console.log(`Header: ${Header}`)
 
     if (!ref.current) {
       const editor = new EditorJS({
@@ -99,24 +99,6 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
               endpoint: '/api/link',
             },
           },
-          image: {
-            class: ImageTool,
-            config: {
-              uploader: {
-                async uploadByFile(file: File) {
-                  // upload to uploadthing
-                  const [res] = await uploadFiles([file], 'imageUploader')
-
-                  return {
-                    success: 1,
-                    file: {
-                      url: res.fileUrl,
-                    },
-                  }
-                },
-              },
-            },
-          },
           list: List,
           code: Code,
           inlineCode: InlineCode,
@@ -126,6 +108,8 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
       })
     }
   }, [])
+
+      console.log(`initializeEditor: ${initializeEditor}`);
 
   useEffect(() => {
     if (Object.keys(errors).length) {
