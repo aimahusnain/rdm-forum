@@ -2,10 +2,8 @@ import CommentsSection from "@/src/components/CommentsSection";
 import EditorOutput from "@/src/components/EditorOutput";
 import { buttonVariants } from "@/src/components/ui/Button";
 import { db } from "@/src/lib/db";
-import { redis } from "@/src/lib/redis";
 import { formatTimeToNow } from "@/src/lib/utils";
-import { CachedPost } from "@/src/types/redis";
-import { Post, User, Vote } from "@prisma/client";
+import { Post, User } from "@prisma/client";
 import { ArrowBigDown, ArrowBigUp, Loader2 } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -28,7 +26,6 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
         id: params.postId,
       },
       include: {
-        votes: true,
         author: true,
       },
     });
@@ -62,26 +59,3 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
     </div>
   );
 };
-
-function PostVoteShell() {
-  return (
-    <div className="flex items-center flex-col pr-6 w-20">
-      {/* upvote */}
-      <div className={buttonVariants({ variant: "ghost" })}>
-        <ArrowBigUp className="h-5 w-5 text-zinc-700" />
-      </div>
-
-      {/* score */}
-      <div className="text-center py-2 font-medium text-sm text-zinc-900">
-        <Loader2 className="h-3 w-3 animate-spin" />
-      </div>
-
-      {/* downvote */}
-      <div className={buttonVariants({ variant: "ghost" })}>
-        <ArrowBigDown className="h-5 w-5 text-zinc-700" />
-      </div>
-    </div>
-  );
-}
-
-export default SubRedditPostPage;
